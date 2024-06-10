@@ -1,6 +1,5 @@
 import pandas as pd
 from binance.client import Client
-import numpy as np
 from datetime import datetime, timedelta
 import math
 import sys
@@ -9,24 +8,27 @@ import time
 """
 enviorment variables used to connect to exchnage and keep track of trades through exchange api
 """
+# api_key: str = 'iR4p2gZmLQ3wgBZqlyHeU8MFpGraNbahFG4teuYJLrnCPrf7LVYomO6sRSSArQv8'
+# secret_key: str = 'SSphMvH3s0coRrdLs3s26GdCeKjqR5AyfTCTKMvj4aJnBUcufzeAQUuVEE4kw0EM'
 
-keyspath: str = ''
-api_key: str = ''
-secret_key: str = ''
+def extract_keys(): # extract api keys from textfile
+    path = str(input("The File's name you want to read the API keys from: "))
+    try:
+        with open(path, 'r') as f:
+            api_key = f.readline().strip()
+            secret_key = f.readline().strip()
+            print(f'Reading API keys successfull.')
+            return api_key, secret_key
+    except Exception as e:
+        print(f'Error reading API keys from file. Error - {e}')
 
-def extract_keys(path:str): # extract api keys from textfile
-    with open(path, 'r') as f:
-        api_key = f.readline().strip()
-        secret_key = f.readline().strip()
-        return api_key, secret_key
-
-# api_key, secret_key = extract_keys(path=keyspath)
+api_key, secret_key = extract_keys()
 
 def Instantiate_Client(api_key:str, secret_key:str):
     try:
         client = Client(api_key=api_key, api_secret=secret_key)
     except Exception as e:
-        print(f'client instantiated unsuccessfully. Error - {e}')
+        print(f'Client instantiated unsuccessfully. Error - {e}')
         sys.exit()
     print('Client successfully instantiated.')
     return client
@@ -232,13 +234,13 @@ def get_weekly_data(asset: str, interval: str, weeks: int):
     df = add_technicals(data=df)
     return df
 
-def Visualize(symbol_id, df):
+def Visualize(symbol_id: str, df):
     from lightweight_charts import Chart
     df = df.iloc[:, :6] 
     df = df.tail(200)
     chart = Chart()
 
-    def take_screenshot(key):
+    def take_screenshot():
         img = chart.screenshot()
         t = time.time()
 
@@ -276,7 +278,9 @@ def Visualize(symbol_id, df):
 
         elif response == 2:
             try:
-                data_path = str(input("The File's name or path you want to read the data from: "))
+
+                data_path = str(input("The File's name you want to read the data from: "))
+                data_path = f'E:\\Trading\\Trading Algorithms\\Dual MACD strategy\\Bot\\{data_path}'
                 trades = pd.read_csv(data_path)
             except:
                 print("Invalid file name, could not get data.")
@@ -482,7 +486,6 @@ def main() -> None:
         daily = get_daily_data(asset=Asset, interval=day_interval, day=days)
 
         if showChart:
-            weekly = get_weekly_data(asset=Asset, interval=week_interval, weeks=weeks)
             Visualize(symbol_id=Asset, df=daily) # visualize chart of strategy
             break
         else: 

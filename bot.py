@@ -8,8 +8,6 @@ import time
 """
 enviorment variables used to connect to exchnage and keep track of trades through exchange api
 """
-# api_key: str = 'iR4p2gZmLQ3wgBZqlyHeU8MFpGraNbahFG4teuYJLrnCPrf7LVYomO6sRSSArQv8'
-# secret_key: str = 'SSphMvH3s0coRrdLs3s26GdCeKjqR5AyfTCTKMvj4aJnBUcufzeAQUuVEE4kw0EM'
 
 def extract_keys(): # extract api keys from textfile
     path = str(input("The File's name you want to read the API keys from: "))
